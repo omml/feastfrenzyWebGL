@@ -10,8 +10,15 @@ class Character {
     #speed;
     #direction;
     #isWalking;
+    #isCarring;
+    #isThrowing;
+    #isCatching;
     #idleAction;
+    #idleHoldAction;
     #walkAction;
+    #walkHoldAction;
+    #throwAction
+    #catchAction
     #currentAction;
     #model;
 
@@ -23,8 +30,15 @@ class Character {
         this.#speed = 5; // Speed of the character (units per second)
         this.#direction = new THREE.Vector2(0, 0);
         this.#isWalking = false;
+        this.#isThrowing = false;
+        this.#isCatching = false;
+        this.#isCarring = false;
         this.#idleAction = null;
+        this.#idleHoldAction = null;
         this.#walkAction = null;
+        this.#walkHoldAction = null;
+        this.#throwAction = null;
+        this.#catchAction = null;
         this.#currentAction = null;
         this.#model = null;
 
@@ -44,14 +58,54 @@ class Character {
             });
 
             const animLoader = new FBXLoader();
+            // Idle animation
             animLoader.load('models/fbx/Idle.fbx', (anim) => {
                 this.#idleAction = this.#mixer.clipAction(anim.animations[0]);
                 this.#idleAction.play();
                 this.#currentAction = this.#idleAction;
             });
 
+            // Idle hold animation
+            animLoader.load('models/fbx/IdleHold.fbx', (anim) => {
+                this.#idleHoldAction = this.#mixer.clipAction(anim.animations[0]);
+                this.#idleHoldAction.play();
+                this.#currentAction = this.#idleHoldAction;
+            });
+
+            // Walk animation
             animLoader.load('models/fbx/Walking.fbx', (anim) => {
                 this.#walkAction = this.#mixer.clipAction(anim.animations[0]);
+            });
+
+            // Walk hold animation
+            animLoader.load('models/fbx/WalkHold.fbx', (anim) => {
+                this.#walkHoldAction = this.#mixer.clipAction(anim.animations[0]);
+            });
+
+            // Throw animation
+            animLoader.load('models/fbx/Throw.fbx', (anim) => {
+                this.#throwAction = this.#mixer.clipAction(anim.animations[0]);
+                this.#throwAction.setLoop(THREE.LoopOnce);
+                this.#mixer.addEventListener('finished', (event) => {
+                    if(this.#isThrowing){
+                        this.#catchAction.timeScale = -1;
+                        this.#catchAction.time = anim.animations[0].duration;
+                        this.#switchToIdleAnimation();
+                    }
+                });
+            });
+
+            // Catch animation
+            animLoader.load('models/fbx/Throw.fbx', (anim) => {
+                this.#catchAction = this.#mixer.clipAction(anim.animations[0]);
+                this.#catchAction.timeScale = -1;
+                this.#catchAction.time = anim.animations[0].duration;
+                this.#catchAction.setLoop(THREE.LoopOnce);
+                this.#mixer.addEventListener('finished', (event) => {
+                    if(this.#isCatching){
+                        this.#switchToIdleHoldAnimation();
+                    }
+                });
             });
 
             // Set Rotation
@@ -96,14 +150,33 @@ class Character {
         this.#updateMovement();
     }
 
-    #updateMovement() {
-        if (this.#direction.lengthSq() > 0) {
-            if (!this.#isWalking) {
-                this.#switchToWalkAnimation();
-            }
+    throwInCatch(){
+        if(this.#isCarring){
+            this.#switchToThrowAnimation();
         } else {
-            if (this.#isWalking) {
-                this.#switchToIdleAnimation();
+            this.#switchToCatchAnimation();
+        }
+    }
+
+    #updateMovement() {
+        if(this.#isCatching == false && this.#isThrowing == false)
+        {
+            if (this.#direction.lengthSq() > 0) {
+                if (!this.#isWalking) {
+                    if(this.#isCarring){
+                        this.#switchToWalkHoldAnimation();
+                    } else {
+                        this.#switchToWalkAnimation();
+                    }
+                }
+            } else {
+                if (this.#isWalking) {
+                    if(this.#isCarring){
+                        this.#switchToIdleHoldAnimation();
+                    } else {
+                        this.#switchToIdleAnimation();
+                    }
+                }
             }
         }
     }
@@ -124,11 +197,55 @@ class Character {
         this.#currentAction.play();
     }
 
+    #switchToWalkHoldAnimation() {
+        this.#isWalking = true;
+        this.#currentAction.stop();
+        this.#currentAction = this.#walkHoldAction;
+        this.#currentAction.play();
+    }
+
     #switchToIdleAnimation() {
         this.#isWalking = false;
         this.#currentAction.stop();
         this.#currentAction = this.#idleAction;
         this.#currentAction.play();
+        this.#isThrowing = false;
+        this.#isCarring = false;
+    }
+
+    #switchToIdleHoldAnimation() {
+        this.#isWalking = false;
+        this.#currentAction.stop();
+        this.#currentAction = this.#idleHoldAction;
+        this.#currentAction.play();
+        this.#isCatching = false;
+        this.#isCarring = true;
+    }
+
+    #switchToThrowAnimation() {
+        this.#isThrowing = true;
+        this.#isWalking = false;
+        this.#currentAction.stop();
+        this.#currentAction = this.#throwAction;
+        this.#currentAction.play();
+    }
+
+    #switchToCatchAnimation() {
+        this.#isCatching = true;
+        this.#isWalking = false;
+        this.#currentAction.stop();
+        this.#currentAction = this.#catchAction;
+        this.#currentAction.play();
+    }
+
+    isThrowing()
+    {
+        return this.#isThrowing;
+    }
+
+    isCatching()
+    {
+        return this.#isCatching;
     }
 
     update(deltaTime) {

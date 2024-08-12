@@ -16,23 +16,28 @@ class CharacterPlayer extends Character {
     }
 
     #onKeyDown(event) {
-        switch (event.code) {
-            case 'ArrowUp':
-            case 'KeyW':
-                this.startMoving(Direction.UP);
-                break;
-            case 'ArrowDown':
-            case 'KeyS':
-                this.startMoving(Direction.DOWN);
-                break;
-            case 'ArrowLeft':
-            case 'KeyA':
-                this.startMoving(Direction.LEFT);
-                break;
-            case 'ArrowRight':
-            case 'KeyD':
-                this.startMoving(Direction.RIGHT);
-                break;
+        if(super.isThrowing() == false && super.isCatching() == false){
+            switch (event.code) {
+                case 'ArrowUp':
+                case 'KeyW':
+                    this.startMoving(Direction.UP);
+                    break;
+                case 'ArrowDown':
+                case 'KeyS':
+                    this.startMoving(Direction.DOWN);
+                    break;
+                case 'ArrowLeft':
+                case 'KeyA':
+                    this.startMoving(Direction.LEFT);
+                    break;
+                case 'ArrowRight':
+                case 'KeyD':
+                    this.startMoving(Direction.RIGHT);
+                    break;
+                case 'Space':
+                    this.throwInCatch();
+                    break;
+            }
         }
     }
 
