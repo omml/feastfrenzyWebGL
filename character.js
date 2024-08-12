@@ -32,6 +32,11 @@ class Character {
                 const idle = this.#mixer.clipAction(anim.animations[0]);
                 idle.play();
             });
+
+            const anim2 = new FBXLoader();
+            anim.load('models/fbx/Walking.fbx', (anim2) => {
+                const walk = this.#mixer.clipAction(anim2.animations[0]);
+            });
     
             // Set Rotation
             object.rotation.set(THREE.MathUtils.degToRad(90), 0, 0); // X-axis rotation of -90 degrees
