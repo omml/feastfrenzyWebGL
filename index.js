@@ -5,7 +5,7 @@ import { createCamera } from './camera.js';
 import { viewSize } from './camera.js';
 import { loadBackgroundModel } from './background.js';
 import { createLight } from './light.js';
-import Character from './character.js';
+import CharacterPlayer from './characterPlayer.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/controls/OrbitControls.js';
 
 // Create the renderer
@@ -27,7 +27,7 @@ const light = createLight(scene);
 // Load background fbx model
 loadBackgroundModel(scene);
 
-const character = new Character(scene, 'Aj', 0, 0);
+const player = new CharacterPlayer(scene, 'Aj', 0, 0);
 
 // Uncoment for orbit
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -41,7 +41,7 @@ function animate() {
     const delta = clock.getDelta();
     
     //Update character animation
-    character.update(delta);
+    player.update(delta);
 
     //Uncoment for orbit
     controls.update();
