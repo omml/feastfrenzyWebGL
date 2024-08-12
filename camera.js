@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 
+export const viewSize = 28;
+
 export function createCamera(){
   const aspect = window.innerWidth / window.innerHeight;
-  const viewSize = 28;
 
   let camera = new THREE.OrthographicCamera(
     -viewSize * aspect / 2,

@@ -259,7 +259,7 @@ export function loadBackgroundModel(scene) {
         });
 
         // Set Rotation
-        object.rotation.set(0, 0, THREE.MathUtils.degToRad(-90)); // Y-axis rotation of -90 degrees
+        object.rotation.set(0, 0, THREE.MathUtils.degToRad(-90)); // Z-axis rotation of -90 degrees
         // Set Position
         object.position.set(-22.5, -25, -10);//z axis is up
 
