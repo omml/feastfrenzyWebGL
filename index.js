@@ -2,8 +2,10 @@ import * as THREE from 'three';
 import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/loaders/FBXLoader.js';
 import { createRenderer } from './renderer.js';
 import { createCamera } from './camera.js';
+import { viewSize } from './camera.js';
 import { loadBackgroundModel } from './background.js';
 import { createLight } from './light.js';
+import Character from './character.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/controls/OrbitControls.js';
 
 // Create the renderer
@@ -25,13 +27,22 @@ const light = createLight(scene);
 // Load background fbx model
 loadBackgroundModel(scene);
 
+const character = new Character(scene, 'Aj', 0, 0);
+
 // Uncoment for orbit
-//const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
+
+// Animation loop
+const clock = new THREE.Clock();
 
 function animate() {
     requestAnimationFrame(animate);
+
+    const delta = clock.getDelta();
+    if (character.getMixer()) character.getMixer().update(delta);
+
     //Uncoment for orbit
-    //controls.update();
+    controls.update();
     renderer.render(scene, camera);
 }
 
