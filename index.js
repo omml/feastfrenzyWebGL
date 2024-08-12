@@ -39,7 +39,9 @@ function animate() {
     requestAnimationFrame(animate);
 
     const delta = clock.getDelta();
-    if (character.getMixer()) character.getMixer().update(delta);
+    
+    //Update character animation
+    character.update(delta);
 
     //Uncoment for orbit
     controls.update();
