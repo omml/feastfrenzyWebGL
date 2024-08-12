@@ -20,7 +20,7 @@ class Character {
     #throwAction
     #catchAction
     #currentAction;
-    #model;
+    _model;
 
     constructor(scene, fileName, x, y) {
         this.#fileName = fileName;
@@ -40,7 +40,7 @@ class Character {
         this.#throwAction = null;
         this.#catchAction = null;
         this.#currentAction = null;
-        this.#model = null;
+        this._model = null;
 
         this.#createCharacter(scene, fileName, x, y);
     }
@@ -50,7 +50,7 @@ class Character {
         loader.load('models/fbx/' + fileName + '.fbx', (object) => {
 
             this.#mixer = new THREE.AnimationMixer(object);
-            this.#model = object;
+            this._model = object;
 
             object.traverse((child) => {
                 child.castShadow = true; // Enable shadow casting
@@ -183,10 +183,10 @@ class Character {
 
     #moveCharacter(deltaTime) {
         const angle = Math.atan2(this.#direction.y, this.#direction.x) + THREE.MathUtils.degToRad(90);
-        if (this.#model) {
-            this.#model.rotation.y = angle; // Rotate model to face direction
-            this.#model.position.x += this.#direction.x * this.#speed * deltaTime;
-            this.#model.position.y += this.#direction.y * this.#speed * deltaTime;
+        if (this._model) {
+            this._model.rotation.y = angle; // Rotate model to face direction
+            this._model.position.x += this.#direction.x * this.#speed * deltaTime;
+            this._model.position.y += this.#direction.y * this.#speed * deltaTime;
         }
     }
 

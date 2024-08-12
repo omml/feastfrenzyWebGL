@@ -57,6 +57,28 @@ class CharacterPlayer extends Character {
                 break;
         }
     }
+
+    #checkPlayingArea(){
+        if (this._model.position.x > 24.5){
+            this._model.position.x = 24.5;
+        }
+        if (this._model.position.x < -22.5){
+            this._model.position.x = -22.5;
+        }
+        if (this._model.position.y > 14){
+            this._model.position.y = 14;
+        }
+        if (this._model.position.y < -3.5){
+            this._model.position.y = -3.5;
+        }
+    }
+
+    update(deltaTime){
+        if(this._model){
+            this.#checkPlayingArea();
+        }
+        super.update(deltaTime);
+    }
 }
 
 export default CharacterPlayer;
