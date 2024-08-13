@@ -18,6 +18,7 @@ export function createCamera(){
   camera.position.set(0.2, -10, 10);
   //To use with the orbit
   //const lookAtPosition = new THREE.Vector3(0, 16, -27);
+  //const lookAtPosition = new THREE.Vector3(-24.3, -5, -7);
   //camera.lookAt(lookAtPosition);
 
   return camera;

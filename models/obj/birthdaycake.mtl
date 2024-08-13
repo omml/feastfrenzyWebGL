@@ -1,0 +1,19 @@
+# Exported from Unity
+# BirthdayCake
+newmtl Material_0
+Kd 0.7568628 0.7490196 0.7686275
+
+newmtl Material_1
+Kd 1 1 1
+map_Kd Asphalt_New_tint0xEA776CFF.jpg
+
+newmtl Material_2
+Kd 1 1 1
+map_Kd Asphalt_New_tint0xE7EAE4FF.jpg
+
+newmtl Material_3
+Kd 1 1 1
+
+newmtl Material_4
+Kd 0.3882353 0.2705882 0.09803919
+

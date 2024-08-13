@@ -1,0 +1,10 @@
+# Exported from Unity
+# skp51B4
+newmtl Material_0
+Kd 1 1 1
+map_Kd tomato_diff.jpg
+
+newmtl Material_1
+Kd 1 1 1
+map_Kd red_drop.jpg
+

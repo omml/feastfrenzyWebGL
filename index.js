@@ -4,8 +4,10 @@ import { createRenderer } from './renderer.js';
 import { createCamera } from './camera.js';
 import { viewSize } from './camera.js';
 import { loadBackgroundModel } from './background.js';
+import { placeExtraObjects } from './extraobjs.js';
 import { createLight } from './light.js';
 import CharacterPlayer from './characterPlayer.js';
+import Food from './food.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/controls/OrbitControls.js';
 
 // Create the renderer
@@ -26,6 +28,8 @@ const light = createLight(scene);
 
 // Load background fbx model
 loadBackgroundModel(scene);
+
+placeExtraObjects(scene);
 
 const player = new CharacterPlayer(scene, 'Aj', 0, 0);
 

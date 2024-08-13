@@ -1,0 +1,32 @@
+# Exported from Unity
+# Burger
+newmtl Material_0
+Kd 0.6392157 0.5254902 0.1960784
+
+newmtl Material_1
+Kd 0.827451 0.7411765 0.5647059
+
+newmtl Material_2
+Kd 1 1 1
+
+newmtl Material_3
+Kd 0.4 0.2980392 0
+
+newmtl Material_4
+Kd 1 0.8 0.8
+
+newmtl Material_5
+Kd 1 0 0
+
+newmtl Material_6
+Kd 0.4980391 1 0
+
+newmtl Material_7
+Kd 0.6392157 0.4784313 0.8
+
+newmtl Material_8
+Kd 1 0.7490196 0
+
+newmtl Material_9
+Kd 1 1 0
+

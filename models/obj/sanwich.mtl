@@ -1,0 +1,23 @@
+# Exported from Unity
+# sanwich
+newmtl Material_0
+Kd 0.6 0.4 0.2
+
+newmtl Material_1
+Kd 0.4 0.2 0
+
+newmtl Material_2
+Kd 1 0.2 0.2
+
+newmtl Material_3
+Kd 0.6 0.8 0
+
+newmtl Material_4
+Kd 1 0.8 0.4
+
+newmtl Material_5
+Kd 0.5019608 0.2509804 0
+
+newmtl Material_6
+Kd 0.545098 0.2705882 0.07450979
+

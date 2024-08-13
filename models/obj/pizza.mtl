@@ -1,0 +1,17 @@
+# Exported from Unity
+# Pizza
+newmtl Material_0
+Kd 1 1 1
+map_Kd Sand_tint0x9B5300FF.png
+
+newmtl Material_1
+Kd 1 1 1
+map_Kd Mirror_02_tint0xFF0600FF.jpg
+
+newmtl Material_2
+Kd 1 1 1
+map_Kd Terrazzo_tint0xF1C400FF.png
+
+newmtl Material_3
+Kd 1 0 0
+
