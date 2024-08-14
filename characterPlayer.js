@@ -4,10 +4,33 @@ import { Direction } from './commonDefinitions.js';
 
 class CharacterPlayer extends Character {
 
-    constructor(scene, fileName, x, y) {
-        super(scene, fileName, x, y);
+    constructor(scene) {
+        if (CharacterPlayer.instance) {
+            return CharacterPlayer.instance;
+        }
+
+        // Initialize properties with parameters
+        if (!scene) {
+            throw new Error("Initial instantiation requires an scene.");
+        }
+
+        super(scene, 'Aj', 0, 0);
 
         this.#setupKeyboardControls();
+
+        // Cache the instance
+        CharacterPlayer.instance = this;
+    }
+
+    // Static method to get the single instance of the class
+    static getInstance(scene) {
+        if (!CharacterPlayer.instance) {
+            if (!scene) {
+                throw new Error("getInstance requires an scene for the first call.");
+            }
+            CharacterPlayer.instance = new CharacterPlayer(scene);
+        }
+        return CharacterPlayer.instance;
     }
 
     #setupKeyboardControls() {
