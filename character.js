@@ -248,6 +248,11 @@ class Character {
         return this.#isCatching;
     }
 
+    addChildObject(obj)
+    {
+        //this._model.add(obj);
+    }
+
     update(deltaTime) {
         if (this.#mixer) {
             this.#mixer.update(deltaTime);
