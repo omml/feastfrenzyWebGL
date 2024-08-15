@@ -1,3 +1,9 @@
+//
+//  extraobjs.js
+//  Feast Frenzy WebGL game
+//
+//  Created by Oscar Martinez on 13/Aug/2024.
+//
 import * as THREE from 'three';
 import FoodStatic from './foodStatic.js';
 

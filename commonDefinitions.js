@@ -1,4 +1,9 @@
-
+//
+//  commonDefinitions.js
+//  Feast Frenzy WebGL game
+//
+//  Created by Oscar Martinez on 12/Aug/2024.
+//
 export const Direction = {
   UP: 0,
   DOWN: 1,

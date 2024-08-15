@@ -1,3 +1,9 @@
+//
+//  food.js
+//  Feast Frenzy WebGL game
+//
+//  Created by Oscar Martinez on 13/Aug/2024.
+//
 import * as THREE from 'three';
 import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/loaders/MTLLoader.js';
@@ -51,7 +57,7 @@ class Food {
                 scene.add(newObj);
                 return newObj;
             } else {
-                console.warn('Model not loaded yet, retrying...');
+                console.log('Model not loaded yet, retrying...');
                 setTimeout(retryIfNeeded, delay);
             }
         };

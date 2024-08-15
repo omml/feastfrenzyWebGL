@@ -1,3 +1,9 @@
+//
+//  index.js
+//  Feast Frenzy WebGL game
+//
+//  Created by Oscar Martinez on 10/Aug/2024.
+//
 import * as THREE from 'three';
 import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/loaders/FBXLoader.js';
 import { createRenderer } from './renderer.js';

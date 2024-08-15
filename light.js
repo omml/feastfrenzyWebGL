@@ -1,3 +1,9 @@
+//
+//  lights.js
+//  Feast Frenzy WebGL game
+//
+//  Created by Oscar Martinez on 12/Aug/2024.
+//
 import * as THREE from 'three';
 
 export function createLight(scene){
