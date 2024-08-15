@@ -64,7 +64,7 @@ class FoodStatic {
                 scene.add(newObj);
                 return newObj;
             } else {
-                console.log('Model not loaded yet, retrying...');
+                console.log('Model not loaded yet, loading...');
                 setTimeout(retryIfNeeded, delay);
             }
         };
