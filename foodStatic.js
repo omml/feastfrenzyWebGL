@@ -9,38 +9,42 @@ import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/j
 import { MTLLoader } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/loaders/MTLLoader.js';
 
 class FoodStatic {
+    _scene;
     #fileName;
     #x;
     #y;
+    _scale;
     _model;
 
     constructor(scene, fileName, x, y, z, yRot = 0) {
+        this._scene = scene;
         this.#fileName = fileName;
         this.#x = x;
         this.#y = y;
         this._model = null;
+        this._scale = 3;
 
-        this.#createFood(scene, fileName, x, y, z, yRot);
+        this.#createFood( x, y, z, yRot);
     }
 
-    #createFood(scene, fileName, x, y, z, yRot) {
+    #createFood( x, y, z, yRot) {
 
         // Load materials
         const mtlLoader = new MTLLoader();
-        mtlLoader.load('models/obj/' + fileName + '.mtl', (materials) => {
+        mtlLoader.load('models/obj/' + this.#fileName + '.mtl', (materials) => {
             materials.preload();
 
             // Load OBJ model
             const objLoader = new OBJLoader();
             objLoader.setMaterials(materials);
-            objLoader.load('models/obj/' + fileName + '.obj', (object) => {
+            objLoader.load('models/obj/' + this.#fileName + '.obj', (object) => {
                 this._model = object;
                 // Set Rotation
                 object.rotation.set(THREE.MathUtils.degToRad(90), THREE.MathUtils.degToRad(yRot), 0);
                 // Set Position
                 object.position.set(x, y, z); // z axis is up
-                object.scale.setScalar(3);
-                scene.add(object);
+                object.scale.setScalar(this._scale);//3
+                this._scene.add(object);
             });
 
             
@@ -48,11 +52,11 @@ class FoodStatic {
     }
 
     getModel(){
-        //return this._model;
+        return this._model;
     }
 
     setPosition(x, y, z){
-        //this._model.position.set(x, y, z);
+        this._model.position.set(x, y, z);
     }
 
     reuse(scene, x, y, z, yRot = 0, delay = 100) {

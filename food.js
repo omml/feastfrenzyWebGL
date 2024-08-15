@@ -5,65 +5,98 @@
 //  Created by Oscar Martinez on 13/Aug/2024.
 //
 import * as THREE from 'three';
-import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/loaders/OBJLoader.js';
-import { MTLLoader } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/loaders/MTLLoader.js';
-//import { Direction } from './commonDefinitions.js';
 
-class Food {
-    #fileName;
-    #x;
-    #y;
-    _model;
+import FoodStatic from './foodStatic.js';
+import CharacterPlayer from './characterPlayer.js';
 
-    constructor(scene, fileName, x, y, z, yRot = 0) {
-        this.#fileName = fileName;
-        this.#x = x;
-        this.#y = y;
-        this._model = null;
+class Food extends FoodStatic {
 
-        this.#createFood(scene, fileName, x, y, z, yRot);
+    #fromPlayer;
+    #state;
+
+    //#enemy
+
+    #isCake;
+
+    constructor(scene, fileName, x, y, z, isCake) {
+        super(scene, fileName, x, y, z);
+
+        this.#isCake = isCake;
+        this.oppositeCollisionObj = [];
     }
 
-    #createFood(scene, fileName, x, y, z, yRot) {
-
-        // Load materials
-        const mtlLoader = new MTLLoader();
-        mtlLoader.load('models/obj/' + fileName + '.mtl', (materials) => {
-            materials.preload();
-
-            // Load OBJ model
-            const objLoader = new OBJLoader();
-            objLoader.setMaterials(materials);
-            objLoader.load('models/obj/' + fileName + '.obj', (object) => {
-                this._model = object;
-                // Set Rotation
-                object.rotation.set(THREE.MathUtils.degToRad(90), THREE.MathUtils.degToRad(yRot), 0);
-                // Set Position
-                object.position.set(x, y, z); // z axis is up
-                object.scale.setScalar(3);
-                scene.add(object);
-            });
-
-            
-        });
+    // Set enemies that are opposite, so collision is tested against them
+    setOppositeCollisionObj(id) {
+        this.oppositeCollisionObj.push(id);
     }
 
-    reuse(scene, x, y, z, yRot = 0, delay = 100) {
-        const retryIfNeeded = () => {
-            if (this._model) {
-                const newObj = this._model.clone();
-                newObj.position.set(x, y, z);
-                newObj.rotation.set(THREE.MathUtils.degToRad(90), THREE.MathUtils.degToRad(yRot), 0); // X-axis rotation of 90 degrees
-                scene.add(newObj);
-                return newObj;
-            } else {
-                console.log('Model not loaded yet, retrying...');
-                setTimeout(retryIfNeeded, delay);
-            }
-        };
-    
-        return retryIfNeeded();
+    // Returns food's state
+    getState() {
+        return this.#state;
     }
+
+    // Returns wheather food is cake
+    getIsCake() {
+        return this.#isCake;
+    }
+
+    setEnemy(e) {
+        //#enemy = e;
+    }
+
+    setCarriedPosition() {
+        const player = CharacterPlayer.getInstance();
+
+        var worldPosition = new THREE.Vector3();
+        var worldRotation = new THREE.Quaternion();
+        var worldScale = new THREE.Vector3();
+
+        worldPosition = player.getWorldPosition();
+        this._model.getWorldQuaternion(worldRotation);
+        this._model.getWorldScale(worldScale);
+
+        player.addChildObject(this._model);
+
+        var worldMatrix = new THREE.Matrix4();
+        worldMatrix.compose(worldPosition, worldRotation, worldScale);
+
+        // Convert the world transform into local space of the new parent
+        var localMatrix = new THREE.Matrix4();
+        localMatrix.copy(player.getMatrixWorld()).invert(); // Invert parent's world matrix
+        localMatrix.multiply(worldMatrix); // Multiply by world matrix of object B
+
+        // Decompose the result into position, rotation, and scale
+        localMatrix.decompose(this._model.position, this._model.quaternion, this._model.scale);
+
+        this._model.position.z += 25;
+        this._model.position.y += 180;
+    }
+
+    setFreePosition(){
+        const player = CharacterPlayer.getInstance();
+
+        // Get the current world position, rotation, and scale of the model
+        var worldPosition = new THREE.Vector3();
+        var worldRotation = new THREE.Quaternion();
+        var worldScale = new THREE.Vector3();
+        var worldMatrix = new THREE.Matrix4();
+
+        this._model.getWorldPosition(worldPosition);
+        this._model.getWorldQuaternion(worldRotation);
+        this._model.getWorldScale(worldScale);
+
+        var rotation = new THREE.Euler().setFromQuaternion( worldRotation);
+
+        player.removeChildObject(this._model);
+
+        this._model.position.set(worldPosition.x, worldPosition.y, worldPosition.z);
+        this._model.rotation.set(rotation.x, rotation.y, rotation.z);
+        this._model.scale.setScalar(worldScale.x);
+
+        this._scene.add(this._model);
+
+    }
+
 }
 
 export default Food;

@@ -20,7 +20,7 @@ class CharacterPlayer extends Character {
             throw new Error("Initial instantiation requires an scene.");
         }
 
-        super(scene, 'Aj', 0, 0);
+        super(scene, 'Aj', 0, 0, 0.025);
 
         this.#setupKeyboardControls();
 

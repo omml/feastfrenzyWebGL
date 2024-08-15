@@ -39,6 +39,21 @@ placeExtraObjects(scene);
 
 const player = new CharacterPlayer(scene, 'Aj', 0, 0);
 
+const food = new Food(scene,'birthdaycake', 0, 0, -5);
+
+setTimeout(testCarrying, 5000);
+
+function testCarrying() {
+    food.setCarriedPosition();
+}
+
+setTimeout(testReleasing, 10000);
+
+function testReleasing() {
+    food.setFreePosition(scene);
+}
+
+
 // Uncoment for orbit
 const controls = new OrbitControls(camera, renderer.domElement);
 

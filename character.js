@@ -13,6 +13,7 @@ class Character {
     #mixer;
     #x;
     #y;
+    #scale;
     #speed;
     #direction;
     #isWalking;
@@ -28,7 +29,7 @@ class Character {
     #currentAction;
     _model;
 
-    constructor(scene, fileName, x, y) {
+    constructor(scene, fileName, x, y, s) {
         this.#fileName = fileName;
         this.#mixer = null;
         this.#x = x;
@@ -47,6 +48,7 @@ class Character {
         this.#catchAction = null;
         this.#currentAction = null;
         this._model = null;
+        this.#scale = s;
 
         this.#createCharacter(scene, fileName, x, y);
     }
@@ -118,7 +120,7 @@ class Character {
             object.rotation.set(THREE.MathUtils.degToRad(90), 0, 0); // X-axis rotation of 90 degrees
             // Set Position
             object.position.set(x, y, -10); // z axis is up
-            object.scale.setScalar(0.025);
+            object.scale.setScalar(this.#scale);
 
             scene.add(object);
         });
@@ -256,7 +258,36 @@ class Character {
 
     addChildObject(obj)
     {
-        //this._model.add(obj);
+        this._model.add(obj);
+    }
+
+    removeChildObject(obj)
+    {
+        this._model.remove(obj);
+    }
+
+    getMatrixWorld()
+    {
+        return this._model.matrixWorld;
+    }
+
+    getQuaternion()
+    {
+        return this._model.quaternion;
+    }
+
+    getScale()
+    {
+        return this._model.scale;
+    }
+
+    getWorldPosition()
+    {
+        var worldPosition = new THREE.Vector3();
+
+        this._model.getWorldPosition(worldPosition);
+
+        return worldPosition;
     }
 
     update(deltaTime) {
