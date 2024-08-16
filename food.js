@@ -8,94 +8,130 @@ import * as THREE from 'three';
 
 import FoodStatic from './foodStatic.js';
 import CharacterPlayer from './characterPlayer.js';
+import { FoodState } from './commonDefinitions.js';
 
-class Food extends FoodStatic {
+class Food extends FoodStatic
+{
 
-    #fromPlayer;
-    #state;
+	#fromPlayer;
+	#state;
+	#direction;
+	#speed;
 
-    //#enemy
+	//#enemy
 
-    #isCake;
+	#isCake;
 
-    constructor(scene, fileName, x, y, z, isCake) {
-        super(scene, fileName, x, y, z);
+	constructor(scene, fileName, x, y, z, isCake)
+	{
+		super(scene, fileName, x, y, z);
 
-        this.#isCake = isCake;
-        this.oppositeCollisionObj = [];
-    }
+		this.#state = FoodState.FOOD_IDLE;
+		this.#direction = new THREE.Vector2(0, -1);
+		this.#speed = 10;
+		this.#isCake = isCake;
+		this.oppositeCollisionObj = [];
 
-    // Set enemies that are opposite, so collision is tested against them
-    setOppositeCollisionObj(id) {
-        this.oppositeCollisionObj.push(id);
-    }
+	}
 
-    // Returns food's state
-    getState() {
-        return this.#state;
-    }
+	// Set enemies that are opposite, so collision is tested against them
+	setOppositeCollisionObj(id)
+	{
+		this.oppositeCollisionObj.push(id);
+	}
 
-    // Returns wheather food is cake
-    getIsCake() {
-        return this.#isCake;
-    }
+	// Returns food's state
+	getState()
+	{
+		return this.#state;
+	}
 
-    setEnemy(e) {
-        //#enemy = e;
-    }
+	// Returns wheather food is cake
+	getIsCake()
+	{
+		return this.#isCake;
+	}
 
-    setCarriedPosition() {
-        const player = CharacterPlayer.getInstance();
+	setEnemy(e)
+	{
+		//#enemy = e;
+	}
 
-        var worldPosition = new THREE.Vector3();
-        var worldRotation = new THREE.Quaternion();
-        var worldScale = new THREE.Vector3();
+	setCarriedPosition()
+	{
+		const player = CharacterPlayer.getInstance();
 
-        worldPosition = player.getWorldPosition();
-        this._model.getWorldQuaternion(worldRotation);
-        this._model.getWorldScale(worldScale);
+		var worldPosition = new THREE.Vector3();
+		var worldRotation = new THREE.Quaternion();
+		var worldScale = new THREE.Vector3();
 
-        player.addChildObject(this._model);
+		worldPosition = player.getWorldPosition();
+		this._model.getWorldQuaternion(worldRotation);
+		this._model.getWorldScale(worldScale);
 
-        var worldMatrix = new THREE.Matrix4();
-        worldMatrix.compose(worldPosition, worldRotation, worldScale);
+		player.addChildObject(this._model);
 
-        // Convert the world transform into local space of the new parent
-        var localMatrix = new THREE.Matrix4();
-        localMatrix.copy(player.getMatrixWorld()).invert(); // Invert parent's world matrix
-        localMatrix.multiply(worldMatrix); // Multiply by world matrix of object B
+		var worldMatrix = new THREE.Matrix4();
+		worldMatrix.compose(worldPosition, worldRotation, worldScale);
 
-        // Decompose the result into position, rotation, and scale
-        localMatrix.decompose(this._model.position, this._model.quaternion, this._model.scale);
+		// Convert the world transform into local space of the new parent
+		var localMatrix = new THREE.Matrix4();
+		localMatrix.copy(player.getMatrixWorld()).invert(); // Invert parent's world matrix
+		localMatrix.multiply(worldMatrix); // Multiply by world matrix of object B
 
-        this._model.position.z += 25;
-        this._model.position.y += 180;
-    }
+		// Decompose the result into position, rotation, and scale
+		localMatrix.decompose(this._model.position, this._model.quaternion, this._model.scale);
 
-    setFreePosition(){
-        const player = CharacterPlayer.getInstance();
+		this._model.position.z += 25;
+		this._model.position.y += 180;
+	}
 
-        // Get the current world position, rotation, and scale of the model
-        var worldPosition = new THREE.Vector3();
-        var worldRotation = new THREE.Quaternion();
-        var worldScale = new THREE.Vector3();
-        var worldMatrix = new THREE.Matrix4();
+	setFreePosition()
+	{
+		const player = CharacterPlayer.getInstance();
 
-        this._model.getWorldPosition(worldPosition);
-        this._model.getWorldQuaternion(worldRotation);
-        this._model.getWorldScale(worldScale);
+		// Get the current world position, rotation, and scale of the model
+		var worldPosition = new THREE.Vector3();
+		var worldRotation = new THREE.Quaternion();
+		var worldScale = new THREE.Vector3();
 
-        var rotation = new THREE.Euler().setFromQuaternion( worldRotation);
+		this._model.getWorldPosition(worldPosition);
+		this._model.getWorldQuaternion(worldRotation);
+		this._model.getWorldScale(worldScale);
 
-        player.removeChildObject(this._model);
+		var rotation = new THREE.Euler().setFromQuaternion(worldRotation);
 
-        this._model.position.set(worldPosition.x, worldPosition.y, worldPosition.z);
-        this._model.rotation.set(rotation.x, rotation.y, rotation.z);
-        this._model.scale.setScalar(worldScale.x);
+		player.removeChildObject(this._model);
 
-        this._scene.add(this._model);
+		this._model.position.set(worldPosition.x, worldPosition.y, worldPosition.z);
+		this._model.rotation.set(rotation.x, rotation.y, rotation.z);
+		this._model.scale.setScalar(worldScale.x);
 
-    }
+		const dir = player.getDirection();
+		this.#direction.x = dir.x;
+		this.#direction.y = dir.y;
+
+		this.#state = FoodState.FOOD_FLYING;
+
+		this._scene.add(this._model);
+	}
+
+	#moveFood(deltaTime)
+	{
+		if (this._model)
+		{
+			this._model.position.x += this.#direction.x * this.#speed * deltaTime;
+			this._model.position.y += this.#direction.y * this.#speed * deltaTime;
+		}
+	}
+
+	update(deltaTime)
+	{
+		if (this.#state == FoodState.FOOD_FLYING)
+		{
+			this.#moveFood(deltaTime);
+		}
+	}
 
 }
 

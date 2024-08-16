@@ -5,10 +5,10 @@
 //  Created by Oscar Martinez on 12/Aug/2024.
 //
 export const Direction = {
-  UP: 0,
-  DOWN: 1,
-  LEFT: 2,
-  RIGHT: 3
+	UP: 0,
+	DOWN: 1,
+	LEFT: 2,
+	RIGHT: 3
 };
 
 export const FoodState = {

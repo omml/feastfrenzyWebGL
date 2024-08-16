@@ -39,18 +39,20 @@ placeExtraObjects(scene);
 
 const player = new CharacterPlayer(scene, 'Aj', 0, 0);
 
-const food = new Food(scene,'birthdaycake', 0, 0, -5);
+const food = new Food(scene, 'birthdaycake', 0, 0, -5);
 
 setTimeout(testCarrying, 5000);
 
-function testCarrying() {
-    food.setCarriedPosition();
+function testCarrying()
+{
+	food.setCarriedPosition();
 }
 
 setTimeout(testReleasing, 10000);
 
-function testReleasing() {
-    food.setFreePosition(scene);
+function testReleasing()
+{
+	food.setFreePosition(scene);
 }
 
 
@@ -60,27 +62,31 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // Animation loop
 const clock = new THREE.Clock();
 
-function animate() {
-    requestAnimationFrame(animate);
+function animate()
+{
+	requestAnimationFrame(animate);
 
-    const delta = clock.getDelta();
-    
-    //Update character animation
-    player.update(delta);
+	const delta = clock.getDelta();
 
-    //Uncoment for orbit
-    controls.update();
-    renderer.render(scene, camera);
+	//Update character animation
+	player.update(delta);
+
+	food.update(delta);
+
+	//Uncoment for orbit
+	controls.update();
+	renderer.render(scene, camera);
 }
 
 animate();
 
-window.addEventListener('resize', function () {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    const aspect = window.innerWidth / window.innerHeight;
-    camera.left = -viewSize * aspect / 2;
-    camera.right = viewSize * aspect / 2;
-    camera.top = viewSize / 2;
-    camera.bottom = -viewSize / 2;
-    camera.updateProjectionMatrix();
+window.addEventListener('resize', function ()
+{
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	const aspect = window.innerWidth / window.innerHeight;
+	camera.left = -viewSize * aspect / 2;
+	camera.right = viewSize * aspect / 2;
+	camera.top = viewSize / 2;
+	camera.bottom = -viewSize / 2;
+	camera.updateProjectionMatrix();
 });
