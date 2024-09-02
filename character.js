@@ -17,8 +17,9 @@ class Character
 	#scale;
 	#speed;
 	#direction;
+	#directionBeforeStopping;
 	#isWalking;
-	#isCarring;
+	#isCarrying;
 	#isThrowing;
 	#isCatching;
 	#idleAction;
@@ -29,6 +30,7 @@ class Character
 	#catchAction
 	#currentAction;
 	_model;
+	actions;
 
 	constructor(scene, fileName, x, y, s)
 	{
@@ -38,10 +40,11 @@ class Character
 		this.#y = y;
 		this.#speed = 5; // Speed of the character (units per second)
 		this.#direction = new THREE.Vector2(0, -1);
+		this.#directionBeforeStopping = new THREE.Vector2(0, -1);
 		this.#isWalking = false;
 		this.#isThrowing = false;
 		this.#isCatching = false;
-		this.#isCarring = false;
+		this.#isCarrying = false;
 		this.#idleAction = null;
 		this.#idleHoldAction = null;
 		this.#walkAction = null;
@@ -51,6 +54,7 @@ class Character
 		this.#currentAction = null;
 		this._model = null;
 		this.#scale = s;
+		this.actions = {}; // Store all actions by name or index
 
 		this.#createCharacter(scene, fileName, x, y);
 	}
@@ -75,28 +79,34 @@ class Character
 			animLoader.load('models/fbx/Idle.fbx', (anim) =>
 			{
 				this.#idleAction = this.#mixer.clipAction(anim.animations[0]);
-				this.#idleAction.play();
 				this.#currentAction = this.#idleAction;
+				this.#idleAction.play();
+
+				this.storeAnimationNames(this.#idleAction, 'idle');
 			});
 
 			// Idle hold animation
 			animLoader.load('models/fbx/IdleHold.fbx', (anim) =>
 			{
 				this.#idleHoldAction = this.#mixer.clipAction(anim.animations[0]);
-				this.#idleHoldAction.play();
-				this.#currentAction = this.#idleHoldAction;
+
+				this.storeAnimationNames(this.#idleHoldAction, 'idleHold');
 			});
 
 			// Walk animation
 			animLoader.load('models/fbx/Walking.fbx', (anim) =>
 			{
 				this.#walkAction = this.#mixer.clipAction(anim.animations[0]);
+
+				this.storeAnimationNames(this.#walkAction, 'walking');
 			});
 
 			// Walk hold animation
 			animLoader.load('models/fbx/WalkHold.fbx', (anim) =>
 			{
 				this.#walkHoldAction = this.#mixer.clipAction(anim.animations[0]);
+
+				this.storeAnimationNames(this.#walkHoldAction, 'walkingHold');
 			});
 
 			// Throw animation
@@ -108,11 +118,13 @@ class Character
 				{
 					if (this.#isThrowing)
 					{
-						this.#catchAction.timeScale = -1;
-						this.#catchAction.time = anim.animations[0].duration;
+						//this.#throwAction.timeScale = -1;
+						//this.#throwAction.time = anim.animations[0].duration;
 						this.#switchToIdleAnimation();
 					}
 				});
+
+				this.storeAnimationNames(this.#throwAction, 'throw');
 			});
 
 			// Catch animation
@@ -129,6 +141,8 @@ class Character
 						this.#switchToIdleHoldAnimation();
 					}
 				});
+
+				this.storeAnimationNames(this.#catchAction, 'catch');
 			});
 
 			// Set Rotation
@@ -140,6 +154,20 @@ class Character
 			scene.add(object);
 		});
 	}
+
+	storeAnimationNames(action, name)
+	{
+		this.actions[name] = action;
+	}
+
+	getCurrentPlayingAnimation() {
+        for (const name in this.actions) {
+            if (this.actions[name] == this.#currentAction) {
+                return name; // Return the modified name of the currently playing animation
+            }
+        }
+        return null; // Return null if no animation is currently playing
+    }
 
 	startMoving(direction)
 	{
@@ -163,6 +191,9 @@ class Character
 
 	stopMoving(direction)
 	{
+		this.#directionBeforeStopping.x = this.#direction.x;
+		this.#directionBeforeStopping.y = this.#direction.y;
+
 		switch (direction)
 		{
 			case Direction.UP:
@@ -177,9 +208,14 @@ class Character
 		this.#updateMovement();
 	}
 
+	stop()
+	{
+		this.#updateMovement();
+	}
+
 	throwInCatch()
 	{
-		if (this.#isCarring)
+		if (this.#isCarrying)
 		{
 			this.#switchToThrowAnimation();
 		} else
@@ -190,13 +226,13 @@ class Character
 
 	#updateMovement()
 	{
-		if (this.#isCatching == false && this.#isThrowing == false)
+		//if (this.#isCatching == false && this.#isThrowing == false)
 		{
 			if (this.#direction.lengthSq() > 0)
 			{
 				if (!this.#isWalking)
 				{
-					if (this.#isCarring)
+					if (this.#isCarrying)
 					{
 						this.#switchToWalkHoldAnimation();
 					} else
@@ -208,7 +244,7 @@ class Character
 			{
 				if (this.#isWalking)
 				{
-					if (this.#isCarring)
+					if (this.#isCarrying)
 					{
 						this.#switchToIdleHoldAnimation();
 					} else
@@ -233,38 +269,50 @@ class Character
 
 	#switchToWalkAnimation()
 	{
-		this.#isWalking = true;
-		this.#currentAction.stop();
-		this.#currentAction = this.#walkAction;
-		this.#currentAction.play();
+		if(this.#currentAction != this.#walkAction)
+		{
+			this.#isWalking = true;
+			this.#currentAction.stop();
+			this.#currentAction = this.#walkAction;
+			this.#currentAction.play();
+		}
 	}
 
 	#switchToWalkHoldAnimation()
 	{
-		this.#isWalking = true;
-		this.#currentAction.stop();
-		this.#currentAction = this.#walkHoldAction;
-		this.#currentAction.play();
+		if(this.#currentAction != this.#walkHoldAction)
+		{
+			this.#isWalking = true;
+			this.#currentAction.stop();
+			this.#currentAction = this.#walkHoldAction;
+			this.#currentAction.play();
+		}
 	}
 
 	#switchToIdleAnimation()
 	{
-		this.#isWalking = false;
-		this.#currentAction.stop();
-		this.#currentAction = this.#idleAction;
-		this.#currentAction.play();
-		this.#isThrowing = false;
-		this.#isCarring = false;
+		if(this.#currentAction != this.#idleAction)
+		{
+			this.#isWalking = false;
+			this.#currentAction.stop();
+			this.#currentAction = this.#idleAction;
+			this.#currentAction.play();
+			this.#isThrowing = false;
+			this.#isCarrying = false;
+		}
 	}
 
 	#switchToIdleHoldAnimation()
 	{
-		this.#isWalking = false;
-		this.#currentAction.stop();
-		this.#currentAction = this.#idleHoldAction;
-		this.#currentAction.play();
-		this.#isCatching = false;
-		this.#isCarring = true;
+		if(this.#currentAction != this.#idleHoldAction)
+		{
+			this.#isWalking = false;
+			this.#currentAction.stop();
+			this.#currentAction = this.#idleHoldAction;
+			this.#currentAction.play();
+			this.#isCatching = false;
+			this.#isCarrying = true;
+		}
 	}
 
 	#switchToThrowAnimation()
@@ -290,9 +338,39 @@ class Character
 		return this.#isThrowing;
 	}
 
+	hasFinishedThrowing()
+	{
+		let retVal = false;
+
+		if(this.#isThrowing)
+		{
+			let currTime = this.getCurrentActionTime();
+			let dur = this.getCurrentActionDuration();
+			if( currTime >= dur)
+			{
+				this.#isThrowing = false;
+				retVal = true;
+			}
+		}
+
+		return retVal;
+	}
+
 	isCatching()
 	{
 		return this.#isCatching;
+	}
+
+	setIsCarrying(value)
+	{
+		if(value)
+		{
+			this.#switchToIdleHoldAnimation();
+		}
+		else
+		{
+			this.#switchToIdleAnimation();
+		}
 	}
 
 	addChildObject(obj)
@@ -332,6 +410,31 @@ class Character
 	getDirection()
 	{
 		return this.#direction;
+	}
+
+	getDirectionBeforeStopping()
+	{
+		return this.#directionBeforeStopping;
+	}
+
+	getCurrentActionTime()
+	{
+		return this.#currentAction.time;
+	}
+
+	getCurrentActionDuration()
+	{
+		return this.#currentAction.getClip().duration;
+	}
+
+	getCurrentAction()
+	{
+		return this.#currentAction;
+	}
+
+	isIdle()
+	{
+		return this.#currentAction == this.actions['idle'];
 	}
 
 	update(deltaTime)

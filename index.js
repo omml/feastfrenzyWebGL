@@ -15,6 +15,10 @@ import { createLight } from './light.js';
 import CharacterPlayer from './characterPlayer.js';
 import Food from './food.js';
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/controls/OrbitControls.js';
+//import CharacterEnemy from './characterEnemy.js';
+import EnemyHandler from './enemyHandler.js';
+import FoodHandler from './foodHandler.js';
+import { Direction } from './commonDefinitions.js';
 
 // Create the renderer
 const renderer = createRenderer();
@@ -37,6 +41,7 @@ loadBackgroundModel(scene);
 
 placeExtraObjects(scene);
 
+/*
 const player = new CharacterPlayer(scene, 'Aj', 0, 0);
 
 const food = new Food(scene, 'birthdaycake', 0, 0, -5);
@@ -45,7 +50,7 @@ setTimeout(testCarrying, 5000);
 
 function testCarrying()
 {
-	food.setCarriedPosition();
+	food.setCarriedPosition(player);
 }
 
 setTimeout(testReleasing, 10000);
@@ -53,6 +58,43 @@ setTimeout(testReleasing, 10000);
 function testReleasing()
 {
 	food.setFreePosition(scene);
+}
+*/
+
+/*
+const enemy = new CharacterEnemy(scene, "Claire", -34, 0, Direction.LEFT);
+enemy.setCurrentDirection(Direction.RIGHT);
+enemy.setLimits(-26.5, 14);
+const enemy = new CharacterEnemy(scene, "Claire", 34, 0, Direction.RIGHT);
+enemy.setCurrentDirection(Direction.LEFT);
+enemy.setLimits(28.5, 14);
+
+const enemyFood = new Food(scene, 'birthdaycake', 0, 0, -5);
+setTimeout(testCarrying, 5000);
+
+function testCarrying()
+{
+	enemy.setFood(enemyFood);
+	enemyFood.setCarriedPosition(enemy);
+}
+setTimeout(testEnemy,10000);
+function testEnemy()
+{
+	//enemy.startMoving(Direction.LEFT)
+	enemy.startMoving(Direction.RIGHT);
+}
+*/
+
+const enemyHandler = new EnemyHandler(scene, Direction.LEFT);
+const foodHandler = new FoodHandler(scene);
+
+setTimeout(testEnemyHandler,10000);
+
+function testEnemyHandler()
+{
+	foodHandler.start(scene);
+	enemyHandler.setFoodHandler(foodHandler);
+	enemyHandler.start();
 }
 
 
@@ -68,10 +110,18 @@ function animate()
 
 	const delta = clock.getDelta();
 
+	
 	//Update character animation
-	player.update(delta);
+	//player.update(delta);
 
-	food.update(delta);
+	//food.update(delta);
+	
+
+	//enemy.update(delta);
+	//enemyFood.update(delta);
+
+	enemyHandler.update(delta);
+	foodHandler.update(delta);
 
 	//Uncoment for orbit
 	controls.update();

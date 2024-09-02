@@ -17,7 +17,7 @@ class FoodStatic
 	_scale;
 	_model;
 
-	constructor(scene, fileName, x, y, z, yRot = 0)
+	constructor(scene, fileName, x, y, z, yRot = 0, display = true)
 	{
 		this._scene = scene;
 		this.#fileName = fileName;
@@ -26,10 +26,10 @@ class FoodStatic
 		this._model = null;
 		this._scale = 3;
 
-		this.#createFood(x, y, z, yRot);
+		this.#createFood(x, y, z, yRot, display);
 	}
 
-	#createFood(x, y, z, yRot)
+	#createFood(x, y, z, yRot, display)
 	{
 
 		// Load materials
@@ -49,7 +49,11 @@ class FoodStatic
 				// Set Position
 				object.position.set(x, y, z); // z axis is up
 				object.scale.setScalar(this._scale);//3
-				this._scene.add(object);
+
+				if(display)
+				{
+					this._scene.add(object);
+				}
 			});
 
 

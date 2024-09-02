@@ -17,14 +17,12 @@ class Food extends FoodStatic
 	#state;
 	#direction;
 	#speed;
-
-	//#enemy
-
+	#enemy;
 	#isCake;
 
-	constructor(scene, fileName, x, y, z, isCake)
+	constructor(scene, fileName, x, y, z, isCake, display = true)
 	{
-		super(scene, fileName, x, y, z);
+		super(scene, fileName, x, y, z, 0, display);
 
 		this.#state = FoodState.FOOD_IDLE;
 		this.#direction = new THREE.Vector2(0, -1);
@@ -41,7 +39,7 @@ class Food extends FoodStatic
 	}
 
 	// Returns food's state
-	getState()
+	getFoodState()
 	{
 		return this.#state;
 	}
@@ -52,31 +50,30 @@ class Food extends FoodStatic
 		return this.#isCake;
 	}
 
-	setEnemy(e)
+	setEnemy(enemy)
 	{
-		//#enemy = e;
+		this.#enemy = enemy;
+		this.setCarriedPosition(enemy);
 	}
 
-	setCarriedPosition()
+	setCarriedPosition(carryingCharacter)
 	{
-		const player = CharacterPlayer.getInstance();
-
 		var worldPosition = new THREE.Vector3();
 		var worldRotation = new THREE.Quaternion();
 		var worldScale = new THREE.Vector3();
 
-		worldPosition = player.getWorldPosition();
+		worldPosition = carryingCharacter.getWorldPosition();
 		this._model.getWorldQuaternion(worldRotation);
 		this._model.getWorldScale(worldScale);
 
-		player.addChildObject(this._model);
+		carryingCharacter.addChildObject(this._model);
 
 		var worldMatrix = new THREE.Matrix4();
 		worldMatrix.compose(worldPosition, worldRotation, worldScale);
 
 		// Convert the world transform into local space of the new parent
 		var localMatrix = new THREE.Matrix4();
-		localMatrix.copy(player.getMatrixWorld()).invert(); // Invert parent's world matrix
+		localMatrix.copy(carryingCharacter.getMatrixWorld()).invert(); // Invert parent's world matrix
 		localMatrix.multiply(worldMatrix); // Multiply by world matrix of object B
 
 		// Decompose the result into position, rotation, and scale
@@ -86,10 +83,17 @@ class Food extends FoodStatic
 		this._model.position.y += 180;
 	}
 
-	setFreePosition()
+	throwFood( carryingCharacter, fromPlayer) // moveSpeed,
 	{
-		const player = CharacterPlayer.getInstance();
+		//this.#state = FoodState.FOOD_FLYING;
+		this.#fromPlayer = fromPlayer;
+		//this.#speed = moveSpeed;
 
+		this.setFreePosition(carryingCharacter);
+	}
+
+	setFreePosition(carryingCharacter)
+	{
 		// Get the current world position, rotation, and scale of the model
 		var worldPosition = new THREE.Vector3();
 		var worldRotation = new THREE.Quaternion();
@@ -101,13 +105,13 @@ class Food extends FoodStatic
 
 		var rotation = new THREE.Euler().setFromQuaternion(worldRotation);
 
-		player.removeChildObject(this._model);
+		carryingCharacter.removeChildObject(this._model);
 
 		this._model.position.set(worldPosition.x, worldPosition.y, worldPosition.z);
 		this._model.rotation.set(rotation.x, rotation.y, rotation.z);
 		this._model.scale.setScalar(worldScale.x);
 
-		const dir = player.getDirection();
+		const dir = carryingCharacter.getDirectionBeforeStopping();
 		this.#direction.x = dir.x;
 		this.#direction.y = dir.y;
 
@@ -125,11 +129,72 @@ class Food extends FoodStatic
 		}
 	}
 
+	setIdle()
+	{
+		this.#state = FoodState.FOOD_IDLE;
+	}
+
+	isOutsideScreen()
+	{
+		let retVal = false;
+
+		//if (this._model.position.x > 26 || this._model.position.x < -26 || this._model.position.y > 16 || this._model.position.y < -5)
+		if (this._model.position.x > 34 || this._model.position.x < -34 || this._model.position.y > 16 || this._model.position.y < -5)
+		{
+			this.setPosition(10000,10000,10000);
+			retVal = true;
+		}
+		
+		return retVal;
+	}
+
+	reStart()
+	{
+		/*
+		// Selects a random sprite
+		let r = Play::RandomRollRange(f_bk_n, f_tm_n);
+
+		// Sets food index for when eating food
+		_foodIndex = r - f_bk_n;
+
+		// Check if food is cake
+		if (r == f_bk_n)
+		{
+			_isCake = true;
+		}
+		else
+		{
+			_isCake = false;
+		}
+
+		// Sets the sprite
+		SetSprite(r, 0.0f);
+		*/
+
+		// Resets flag to indicate who throw the food for collision detection
+		this.#fromPlayer = false;
+
+		this.setCarriedPosition(this.#enemy);
+
+		// Sets initial food state
+		this.#state = FoodState.FOOD_CARRIED_ENEMY;
+
+		// Sprite state for when displaying splat
+		// _spriteState = SPRITE_STATE_INIT;
+	}
+
 	update(deltaTime)
 	{
 		if (this.#state == FoodState.FOOD_FLYING)
 		{
-			this.#moveFood(deltaTime);
+			if(this.isOutsideScreen() == false)
+			{
+				this.#moveFood(deltaTime);
+			}
+			else
+			{
+				this.#state = FoodState.FOOD_IDLE;
+			}
 		}
 	}
 
