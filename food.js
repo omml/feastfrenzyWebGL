@@ -50,12 +50,14 @@ class Food extends FoodStatic
 		return this.#isCake;
 	}
 
+	// Sets the enemy related to this food
 	setEnemy(enemy)
 	{
 		this.#enemy = enemy;
 		this.setCarriedPosition(enemy);
 	}
 
+	// Sets the food to the carrying state
 	setCarriedPosition(carryingCharacter)
 	{
 		var worldPosition = new THREE.Vector3();
@@ -83,15 +85,15 @@ class Food extends FoodStatic
 		this._model.position.y += 180;
 	}
 
+	// Thorws the food
 	throwFood( carryingCharacter, fromPlayer) // moveSpeed,
 	{
-		//this.#state = FoodState.FOOD_FLYING;
 		this.#fromPlayer = fromPlayer;
-		//this.#speed = moveSpeed;
 
 		this.setFreePosition(carryingCharacter);
 	}
 
+	// Detaches the food from the character
 	setFreePosition(carryingCharacter)
 	{
 		// Get the current world position, rotation, and scale of the model
@@ -120,6 +122,7 @@ class Food extends FoodStatic
 		this._scene.add(this._model);
 	}
 
+	// Moves the food when is not attached to a character
 	#moveFood(deltaTime)
 	{
 		if (this._model)
@@ -129,16 +132,17 @@ class Food extends FoodStatic
 		}
 	}
 
+	// Food got out of screen or splashed
 	setIdle()
 	{
 		this.#state = FoodState.FOOD_IDLE;
 	}
 
+	// Check if food is inside screen
 	isOutsideScreen()
 	{
 		let retVal = false;
 
-		//if (this._model.position.x > 26 || this._model.position.x < -26 || this._model.position.y > 16 || this._model.position.y < -5)
 		if (this._model.position.x > 34 || this._model.position.x < -34 || this._model.position.y > 16 || this._model.position.y < -5)
 		{
 			this.setPosition(10000,10000,10000);
@@ -148,29 +152,9 @@ class Food extends FoodStatic
 		return retVal;
 	}
 
+	// Restart food
 	reStart()
 	{
-		/*
-		// Selects a random sprite
-		let r = Play::RandomRollRange(f_bk_n, f_tm_n);
-
-		// Sets food index for when eating food
-		_foodIndex = r - f_bk_n;
-
-		// Check if food is cake
-		if (r == f_bk_n)
-		{
-			_isCake = true;
-		}
-		else
-		{
-			_isCake = false;
-		}
-
-		// Sets the sprite
-		SetSprite(r, 0.0f);
-		*/
-
 		// Resets flag to indicate who throw the food for collision detection
 		this.#fromPlayer = false;
 
@@ -178,11 +162,9 @@ class Food extends FoodStatic
 
 		// Sets initial food state
 		this.#state = FoodState.FOOD_CARRIED_ENEMY;
-
-		// Sprite state for when displaying splat
-		// _spriteState = SPRITE_STATE_INIT;
 	}
 
+	// Update food movement
 	update(deltaTime)
 	{
 		if (this.#state == FoodState.FOOD_FLYING)

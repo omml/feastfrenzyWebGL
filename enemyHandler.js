@@ -100,28 +100,24 @@ class EnemyHandler
 			enemy.setCurrentDirection(this.#moveDirection);
 			enemy.setLimits(this.#posXMax, this.#posYMax);
 			this.#enemies[i] = enemy;
-
-			
-			// Each enemy is associated with a food object, the food object changes sprite
-			//this.#foodHandler.getFood(i).setEnemy(this.#enemies[i]);
-			//this.#enemies[i].SetFood(this.#foodHandler.getFood(i));
 		}
 	}
 
+	// Sets the food handler
 	setFoodHandler(foodHandler)
 	{
 		this.#foodHandler = foodHandler;
 	}
 
+	// Get enemy by indes
 	getEnemy(index)
 	{
 		return this.#enemies[index];
 	}
 
+	// Starts enemies
 	start()
 	{
-		//int loopLimit = DifficultyHandler::GetInstance().GetNumEnemies();
-
 		for (let i = 0; i < this.loopLimit; i++)
 		{
 			const foodTmp = this.#foodHandler.getFood(i);
@@ -134,22 +130,18 @@ class EnemyHandler
 		this.#initialized = true;
 	}
 
+	// Update animations
 	update(deltaTime)
 	{
 		if(this.#initialized)
 		{
-			//int loopLimit = DifficultyHandler::GetInstance().GetNumEnemies();
-
 			for (let i = 0; i < this.loopLimit; i++)
 			{
 				// If enemy is out of the screen and food as well
 				// of if enemy is out of screen and food was catched
 				// restart the enemy, if the food went out of the screen enemy will
 				// throw it again, if not enemy will just wander to be hit
-				//if (this.#enemies[i].getState() == EnemyState.ENEMY_IDLE && (_enemies[i].GetFoodState() == FOOD_IDLE || _enemies[i].GetFoodState() == FOOD_CARRIED_PLAYER))
-				
 				if (this.#enemies[i].getState() == EnemyState.ENEMY_IDLE && (this.#enemies[i].getFoodState() == FoodState.FOOD_IDLE || this.#enemies[i].getFoodState() == FoodState.FOOD_CARRIED_PLAYER))
-				//if (this.#enemies[i].getState() == EnemyState.ENEMY_IDLE)
 				{	
 					// Set initial limits
 					this.#enemies[i].setLimits(this.#posXMax, 0);
@@ -174,12 +166,6 @@ class EnemyHandler
 			}
 		}
 	}
-
-	reStart()
-	{
-
-	}
-
 }
 
 export default EnemyHandler;

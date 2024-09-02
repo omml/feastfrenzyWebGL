@@ -118,8 +118,6 @@ class Character
 				{
 					if (this.#isThrowing)
 					{
-						//this.#throwAction.timeScale = -1;
-						//this.#throwAction.time = anim.animations[0].duration;
 						this.#switchToIdleAnimation();
 					}
 				});
@@ -155,11 +153,13 @@ class Character
 		});
 	}
 
+	// Used for debugging to check which animation is currently playing
 	storeAnimationNames(action, name)
 	{
 		this.actions[name] = action;
 	}
 
+	// Gets current animation
 	getCurrentPlayingAnimation() {
         for (const name in this.actions) {
             if (this.actions[name] == this.#currentAction) {
@@ -169,6 +169,7 @@ class Character
         return null; // Return null if no animation is currently playing
     }
 
+	// Starts moving towards a direction
 	startMoving(direction)
 	{
 		switch (direction)
@@ -189,6 +190,7 @@ class Character
 		this.#updateMovement();
 	}
 
+	// Stops moving
 	stopMoving(direction)
 	{
 		this.#directionBeforeStopping.x = this.#direction.x;
@@ -208,11 +210,7 @@ class Character
 		this.#updateMovement();
 	}
 
-	stop()
-	{
-		this.#updateMovement();
-	}
-
+	// Switch to throw or catch animation
 	throwInCatch()
 	{
 		if (this.#isCarrying)
@@ -224,6 +222,7 @@ class Character
 		}
 	}
 
+	// Update movement
 	#updateMovement()
 	{
 		//if (this.#isCatching == false && this.#isThrowing == false)
@@ -256,6 +255,7 @@ class Character
 		}
 	}
 
+	// Move character
 	#moveCharacter(deltaTime)
 	{
 		const angle = Math.atan2(this.#direction.y, this.#direction.x) + THREE.MathUtils.degToRad(90);
@@ -267,6 +267,7 @@ class Character
 		}
 	}
 
+	// Switch to walk animation
 	#switchToWalkAnimation()
 	{
 		if(this.#currentAction != this.#walkAction)
@@ -278,6 +279,7 @@ class Character
 		}
 	}
 
+	// Switch to walk while holding animation
 	#switchToWalkHoldAnimation()
 	{
 		if(this.#currentAction != this.#walkHoldAction)
@@ -289,6 +291,7 @@ class Character
 		}
 	}
 
+	// Switch to idle animation
 	#switchToIdleAnimation()
 	{
 		if(this.#currentAction != this.#idleAction)
@@ -302,6 +305,7 @@ class Character
 		}
 	}
 
+	// Switch to idle while holding animation
 	#switchToIdleHoldAnimation()
 	{
 		if(this.#currentAction != this.#idleHoldAction)
@@ -315,6 +319,7 @@ class Character
 		}
 	}
 
+	// Switch to throw animation
 	#switchToThrowAnimation()
 	{
 		this.#isThrowing = true;
@@ -324,6 +329,7 @@ class Character
 		this.#currentAction.play();
 	}
 
+	// Switch to catch animation
 	#switchToCatchAnimation()
 	{
 		this.#isCatching = true;
@@ -333,11 +339,13 @@ class Character
 		this.#currentAction.play();
 	}
 
+	// Check if is throwing
 	isThrowing()
 	{
 		return this.#isThrowing;
 	}
 
+	/*
 	hasFinishedThrowing()
 	{
 		let retVal = false;
@@ -355,12 +363,14 @@ class Character
 
 		return retVal;
 	}
+	*/
 
 	isCatching()
 	{
 		return this.#isCatching;
 	}
 
+	// Change to carrying animations
 	setIsCarrying(value)
 	{
 		if(value)
@@ -373,31 +383,37 @@ class Character
 		}
 	}
 
+	// Adds a child object
 	addChildObject(obj)
 	{
 		this._model.add(obj);
 	}
 
+	// Removes child object
 	removeChildObject(obj)
 	{
 		this._model.remove(obj);
 	}
 
+	// Gets the world matrix
 	getMatrixWorld()
 	{
 		return this._model.matrixWorld;
 	}
 
+	// Gets rotation
 	getQuaternion()
 	{
 		return this._model.quaternion;
 	}
 
+	// Gets scale
 	getScale()
 	{
 		return this._model.scale;
 	}
 
+	// Gets world position
 	getWorldPosition()
 	{
 		var worldPosition = new THREE.Vector3();
@@ -407,36 +423,43 @@ class Character
 		return worldPosition;
 	}
 
+	// Gets direction
 	getDirection()
 	{
 		return this.#direction;
 	}
 
+	// Gets the direction stored before it stopped
 	getDirectionBeforeStopping()
 	{
 		return this.#directionBeforeStopping;
 	}
 
+	// Gets current animation time
 	getCurrentActionTime()
 	{
 		return this.#currentAction.time;
 	}
 
+	// Gets current animation duration
 	getCurrentActionDuration()
 	{
 		return this.#currentAction.getClip().duration;
 	}
 
+	// Gets current animation
 	getCurrentAction()
 	{
 		return this.#currentAction;
 	}
 
+	// Used to know when throwing animatino has finished
 	isIdle()
 	{
 		return this.#currentAction == this.actions['idle'];
 	}
 
+	// Updates animation
 	update(deltaTime)
 	{
 		if (this.#mixer)

@@ -7,8 +7,6 @@
 import * as THREE from 'three';
 
 import Food from './food.js';
-import CharacterPlayer from './characterPlayer.js';
-import { FoodState } from './commonDefinitions.js';
 import { FoodFiles } from './commonDefinitions.js';
 import { NUM_ENEMIES, getRandomInt } from './commonDefinitions.js';
 
@@ -24,6 +22,8 @@ class FoodHandler
 	{
 		let n = 0;
 		let z = 0;
+
+		// Create a pool of food objects
 		this.#foodObjects[0] = new Food(scene, FoodFiles.BIRTHDAYCAKE, n, n, z, true, false);
 		this.#foodObjects[1] = new Food(scene, FoodFiles.BURGER, n, n, z, false, false);
 		this.#foodObjects[2] = new Food(scene, FoodFiles.DONUT, n, n, z, false, false);
@@ -66,6 +66,7 @@ class FoodHandler
 		}
 	}
 
+	// Get food by index
 	getFood(index)
 	{
 		return this.#food[index];
@@ -77,6 +78,7 @@ class FoodHandler
 		this.oppositeCollisionObj.push(id);
 	}
 
+	// Find a food object from the pool
 	findFoodObject(enemyIndex)
 	{
 		let r = getRandomInt(0,this.#foodObjectTaken.length);
@@ -91,6 +93,7 @@ class FoodHandler
 		return r;
 	}
 
+	// Changes the food object of an enemy
 	changeFoodObject(enemyIndex)
 	{
 		let r = this.findFoodObject(enemyIndex);
@@ -100,6 +103,7 @@ class FoodHandler
 		this.#enemyFoodIndex[enemyIndex] = r;
 	}
 
+	// Starts the food objects
 	start(scene)
 	{
 		let n = 0;
@@ -108,26 +112,16 @@ class FoodHandler
 		for (let i = 0; i < NUM_ENEMIES; i++)
 		{
 			// Selects a random object
-			//let r = getRandomInt(0,this.#foodObjectTaken.length);
 			let r = this.findFoodObject(i);
-			// Creates the game object
-			//this.#food[i] = this.#foodObjects[r].reuse(scene, n, n, z, false, false);
-			//this.#food[i] = Object.assign({}, this.#foodObjects[r] );
-
-			// If setEnemy is a prototype method and you want to copy the whole object with its prototype chain
-			//this.#food[i] = Object.create(Object.getPrototypeOf(this.#foodObjects[r]), Object.getOwnPropertyDescriptors(this.#foodObjects[r]));
-
 
 			this.#food[i] = this.#foodObjects[r];
 			this.#enemyFoodIndex[i] = r;
-
-			// TODO: remove food from scene
-			
 		}
 
 		this.#initialized = true;
 	}
 
+	// Updates food movement
 	update(deltaTime)
 	{
 		if(this.#initialized)

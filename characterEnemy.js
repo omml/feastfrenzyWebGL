@@ -42,46 +42,26 @@ class CharacterEnemy extends Character
 		setTimeout(() => this.throwInCatch(), 5000);
 	}
 
+	// Gets enemy state
 	getState()
 	{
 		return this.#enemyState;
 	}
 
-	reSpawn(dir, resFood)
-	{
-		this.#enemyState = EnemyState.ENEMY_INIT;
-		this.#maxCounter = getRandomInt(1, 4);
-		this.#restartFood = resFood;
-
-		if(this.#restartFood == true)
-		{
-			//Restart food
-		}
-		else
-		{
-			//Set animation as walking carrying
-		}
-	}
-
-	reStart(dir)
-	{
-		this.#enemyState = EnemyState.ENEMY_IDLE;
-		this.#maxCounter = getRandomInt(1, 4);
-
-		this.#food.setIdle();
-	}
-
+	// Sets the food
 	setFood(food)
 	{
 		this.#food = food;
 	}
 
+	// Sets moving limits
 	setLimits(x, y)
 	{
 		this.#xLimit = x;
 		this.#yLimit = y;
 	}
 	
+	// Checks if enemy has reached limits
 	hasReachedLimit()
 	{
 		let retVal = false;
@@ -122,12 +102,14 @@ class CharacterEnemy extends Character
 		return retVal;
 	}
 
+	// Launches food
 	launchFood()
 	{
 		this.throwInCatch();
 		this.#food.throwFood(this, false); 
 	}
 
+	// Changes position so it comes from a different postition from out of the screen
 	changeInitPosition()
 	{
 		let xPosIni, yPosIni, posXMin, posXMax, posYMin, posYMax;
@@ -161,22 +143,26 @@ class CharacterEnemy extends Character
 		this._model.position.set(xPosIni, yPosIni, -10);
 	}
 
+	// Sets the direction is moving towards
 	setCurrentDirection(cd)
 	{
 		this.#currentDirection = cd;
 		this.#oldDirection = cd;
 	}
 
+	// Gets the food
 	getFood()
 	{
 		return this.#food;
 	}
 
+	// Gets the food state
 	getFoodState()
 	{
 		return this.#food.getFoodState();
 	}
 
+	// Respans the enemy after it finished
 	reSpawn( dir, resFood)
 	{
 		this.#enemyState = EnemyState.ENEMY_INIT;
@@ -185,28 +171,22 @@ class CharacterEnemy extends Character
 		if (this.#restartFood == true)
 		{
 			// Next time it respawns set animation walking holding again the food
-			//SetSprite(_walkingHoldingSprites[dir]._spriteName, _walkingHoldingSprites[dir]._animSpeed);
 			this.#food.reStart();
 			this.setIsCarrying(true);
-			//this.throwInCatch();
 		}
-		else
-		{
-			// Next time it respawns set animation to walking as player is carrying the
-			//SetSprite(_walkingSprites[dir]._spriteName, _walkingSprites[dir]._animSpeed);
-		}
-		setTimeout(() => this.startMoving(this.#currentDirection), 5000);
+
+		setTimeout(() => this.startMoving(this.#currentDirection), getRandomInt(1000, 5000));
 	}
 
-
-
+	// Updates animation
 	update(deltaTime)
 	{
 		if(this._model)
 		{
 			let r = 0;
 
-			console.log(this.getCurrentPlayingAnimation());
+			// For debugging animations
+			//console.log(this.getCurrentPlayingAnimation());
 
 			// Does something depending on the state
 			switch (this.#enemyState)
@@ -223,12 +203,10 @@ class CharacterEnemy extends Character
 					// Player is not holding the food
 					if (this.#restartFood == true)
 					{
-						console.log("prepare attack");
 						this.#enemyState = EnemyState.ENEMY_PREPARE_ATTACK;
 					}
 					else
 					{
-						console.log("change direction");
 						this.#enemyState = EnemyState.ENEMY_CHANGE_DIRECTION;
 					}
 					super.update(deltaTime);

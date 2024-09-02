@@ -60,16 +60,19 @@ class FoodStatic
 		});
 	}
 
+	// Gets the model
 	getModel()
 	{
 		return this._model;
 	}
 
+	// Sets position
 	setPosition(x, y, z)
 	{
 		this._model.position.set(x, y, z);
 	}
 
+	// Reuses food object
 	reuse(scene, x, y, z, yRot = 0, delay = 100)
 	{
 		const retryIfNeeded = () =>

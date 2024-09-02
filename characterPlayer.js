@@ -46,12 +46,14 @@ class CharacterPlayer extends Character
 		return CharacterPlayer.instance;
 	}
 
+	// Setup player controls
 	#setupKeyboardControls()
 	{
 		window.addEventListener('keydown', (event) => this.#onKeyDown(event));
 		window.addEventListener('keyup', (event) => this.#onKeyUp(event));
 	}
 
+	// Player pressed a key
 	#onKeyDown(event)
 	{
 		if (super.isThrowing() == false && super.isCatching() == false)
@@ -81,6 +83,7 @@ class CharacterPlayer extends Character
 		}
 	}
 
+	// Player stopped pressing a key
 	#onKeyUp(event)
 	{
 		switch (event.code)
@@ -100,6 +103,7 @@ class CharacterPlayer extends Character
 		}
 	}
 
+	// Makes sure players is inside of playing area
 	#checkPlayingArea()
 	{
 		if (this._model.position.x > 24.5)
@@ -120,6 +124,7 @@ class CharacterPlayer extends Character
 		}
 	}
 
+	// Updates animations
 	update(deltaTime)
 	{
 		if (this._model)
