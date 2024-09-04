@@ -16,6 +16,7 @@ class FoodStatic
 	#y;
 	_scale;
 	_model;
+	_collider;
 
 	constructor(scene, fileName, x, y, z, yRot = 0, display = true)
 	{
@@ -54,10 +55,17 @@ class FoodStatic
 				{
 					this._scene.add(object);
 				}
+
+				setTimeout(() => this.setCollider(), 5000);
 			});
 
 
 		});
+	}
+
+	setCollider()
+	{
+		this._collider = new THREE.Box3().setFromObject(this._model);
 	}
 
 	// Gets the model

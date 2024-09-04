@@ -31,9 +31,15 @@ class Character
 	#currentAction;
 	_model;
 	actions;
+	#bbox;
+	#bboxHelper;
+	#collider;
+	_scene;
+
 
 	constructor(scene, fileName, x, y, s)
 	{
+		this._scene = scene;
 		this.#fileName = fileName;
 		this.#mixer = null;
 		this.#x = x;
@@ -80,9 +86,11 @@ class Character
 			{
 				this.#idleAction = this.#mixer.clipAction(anim.animations[0]);
 				this.#currentAction = this.#idleAction;
+				
 				this.#idleAction.play();
 
 				this.storeAnimationNames(this.#idleAction, 'idle');
+				
 			});
 
 			// Idle hold animation
@@ -126,11 +134,9 @@ class Character
 			});
 
 			// Catch animation
-			animLoader.load('models/fbx/Throw.fbx', (anim) =>
+			animLoader.load('models/fbx/Catch.fbx', (anim) =>
 			{
 				this.#catchAction = this.#mixer.clipAction(anim.animations[0]);
-				this.#catchAction.timeScale = -1;
-				this.#catchAction.time = anim.animations[0].duration;
 				this.#catchAction.setLoop(THREE.LoopOnce);
 				this.#mixer.addEventListener('finished', (event) =>
 				{
@@ -150,7 +156,24 @@ class Character
 			object.scale.setScalar(this.#scale);
 
 			scene.add(object);
+
+			setTimeout(() => this.setCollider(), 5000);
 		});
+	}
+
+	setCollider() {
+		if (this._model) {
+			this._collider = new THREE.Box3().setFromObject(this._model);
+		} else {
+			console.error('Model is not yet initialized.');
+		}
+	}
+	
+	getCollider() {
+		if (!this._collider) {
+			console.error('Collider is not initialized.');
+		}
+		return this._collider;
 	}
 
 	// Used for debugging to check which animation is currently playing
@@ -345,26 +368,6 @@ class Character
 		return this.#isThrowing;
 	}
 
-	/*
-	hasFinishedThrowing()
-	{
-		let retVal = false;
-
-		if(this.#isThrowing)
-		{
-			let currTime = this.getCurrentActionTime();
-			let dur = this.getCurrentActionDuration();
-			if( currTime >= dur)
-			{
-				this.#isThrowing = false;
-				retVal = true;
-			}
-		}
-
-		return retVal;
-	}
-	*/
-
 	isCatching()
 	{
 		return this.#isCatching;
@@ -469,6 +472,11 @@ class Character
 		if (this.#isWalking)
 		{
 			this.#moveCharacter(deltaTime);
+		}
+
+		if (this._collider)
+		{
+			this._collider.setFromObject(this._model);
 		}
 	}
 }

@@ -29,7 +29,6 @@ class Food extends FoodStatic
 		this.#speed = 10;
 		this.#isCake = isCake;
 		this.oppositeCollisionObj = [];
-
 	}
 
 	// Set enemies that are opposite, so collision is tested against them
@@ -169,6 +168,25 @@ class Food extends FoodStatic
 	{
 		if (this.#state == FoodState.FOOD_FLYING)
 		{
+			if (this._collider && this._model) {
+				this._collider.setFromObject(this._model);
+	
+				// Debug: Ensure that the collider has been properly set
+				if (this._collider.min && this._collider.max) {
+					console.log('Collider is properly initialized.');
+				} else {
+					console.error('Collider is not properly initialized.');
+				}
+			} else {
+				console.error('Collider or model is undefined.');
+			}
+	
+			// Check for collisions
+			const playerCollider = CharacterPlayer.getInstance().getCollider();
+			if (this._collider && playerCollider && this._collider.intersectsBox(playerCollider)) {
+				console.log('Collision detected!');
+			}
+
 			if(this.isOutsideScreen() == false)
 			{
 				this.#moveFood(deltaTime);

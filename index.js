@@ -41,9 +41,9 @@ loadBackgroundModel(scene);
 
 placeExtraObjects(scene);
 
-/*
-const player = new CharacterPlayer(scene, 'Aj', 0, 0);
 
+const player = new CharacterPlayer(scene, 'Aj', 0, 0);
+/*
 const food = new Food(scene, 'birthdaycake', 0, 0, -5);
 
 setTimeout(testCarrying, 5000);
@@ -112,7 +112,7 @@ function animate()
 
 	
 	//Update character animation
-	//player.update(delta);
+	player.update(delta);
 
 	//food.update(delta);
 	
